@@ -1,0 +1,10 @@
+# 개인 설정·비밀 값
+.claude/settings.local.json
+.env
+.env.*
+
+# OS·편집기
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
