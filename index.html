@@ -206,6 +206,102 @@
   .letter-tile.c2 { background:#e9e4ff; color:#4f38b5; } .letter-tile.c3 { background:#dcf4ea; color:#14663f; }
   .letter-count { font-size:12px; color:var(--faint); font-weight:700; margin-left:8px; }
 
+  /* ===== 게임 요소 ===== */
+  .pup { position:relative; display:inline-block; width:84px; height:86px; flex-shrink:0; }
+  .pup img.base { width:100%; height:100%; object-fit:contain; display:block; }
+  .pup svg.it { position:absolute; overflow:visible; }
+  .pup.sm { width:52px; height:53px; }
+  .pup.lg { width:150px; height:152px; }
+  .pup-btn { border:0; background:none; padding:0; cursor:pointer; position:relative; display:flex; flex-direction:column; align-items:center; }
+  .pup-edit { margin-top:-6px; font-size:11px; font-weight:700; color:var(--pink-text); background:var(--pink-soft); border-radius:99px; padding:2px 8px; position:relative; }
+  .lv-box { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+  .lv-line { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .lv-chip { font-family:var(--round); font-size:14px; padding:4px 10px; border-radius:99px; background:#e9e4ff; color:#4f38b5; white-space:nowrap; }
+  .lv-title { font-family:var(--round); font-size:19px; }
+  .xpbar { height:10px; background:#ece8fb; border-radius:99px; overflow:hidden; }
+  .xpbar > div { height:100%; width:0; background:#8b6cf0; border-radius:99px; transition:width .6s; }
+  .xp-text { font-size:12px; font-weight:700; color:var(--muted); }
+  .hero-msg { margin:12px 0 0; background:var(--pink-softer); border-radius:16px; padding:10px 14px; font-family:var(--round); font-size:17px; }
+  .stat.s4 { background:#dcf4ea; } .stat.s4 b { color:#14663f; }
+  button.stat { border:0; cursor:pointer; font:inherit; }
+  .goal { display:flex; flex-direction:column; gap:8px; }
+  .goal-head { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .goal-chip { font-size:13px; font-weight:700; padding:4px 12px; border-radius:99px; background:#dcf4ea; color:#14663f; }
+  .goal-num { font-family:var(--round); font-size:26px; color:#14663f; }
+  .goal-num small { font-size:17px; color:var(--muted); }
+  .goal-bar { height:12px; background:#e6f3ec; border-radius:99px; overflow:hidden; }
+  .goal-bar > div { height:100%; background:#2fa772; border-radius:99px; transition:width .6s; }
+  .goal.done { background:#f0fbf5; }
+  .sec-title { margin:4px 4px 10px; font-size:19px; }
+  .modes { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; margin-bottom:18px; }
+  .mode { min-height:96px; border:0; border-radius:24px; background:var(--card); box-shadow:var(--shadow); color:var(--text);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-family:var(--round); font-size:18px; padding:10px; }
+  .mi { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  .mi.m1 { background:#fde4ee; color:#c93a73; } .mi.m2 { background:#fdecec; color:#c2364b; }
+  .mi.m3 { background:#fff3e6; color:#a8540f; } .mi.m4 { background:#e9e4ff; color:#4f38b5; }
+  .review-row { width:100%; border:0; cursor:pointer; background:var(--card); border-radius:22px; box-shadow:var(--shadow-sm); padding:14px 18px; margin-bottom:18px;
+    display:flex; align-items:center; justify-content:space-between; font-family:var(--round); font-size:17px; color:var(--pink-text); }
+  .mode-pick { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-top:12px; }
+  .mode-pick button { border:0; border-radius:14px; padding:10px 4px; background:var(--pink-softer); color:var(--muted); font-weight:700; font-size:14px; cursor:pointer; }
+  .mode-pick button[aria-checked="true"] { background:var(--primary); color:#fff; }
+
+  /* 퀴즈 중 콤보·반응 */
+  .combo-row { display:flex; align-items:center; gap:10px; min-height:56px; margin:-6px 0 8px; }
+  #comboBadges { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .combo { display:inline-flex; align-items:center; gap:4px; font-family:var(--round); font-size:22px; color:#fff; background:#e8702a; padding:6px 16px; border-radius:99px; box-shadow:0 4px 0 #b8531a; }
+  .xp-pop { font-family:var(--round); font-size:17px; color:#4f38b5; background:#fff; padding:6px 12px; border-radius:99px; box-shadow:0 3px 0 #e6e0f7; }
+  .hearts { display:inline-flex; gap:2px; }
+  .pup.happy { animation: hop .5s ease; }
+  .pup.sad img.base { filter:grayscale(.6); }
+  .pup.sad { transform:rotate(-8deg); transition:transform .2s; }
+  .burst { position:absolute; width:14px; height:14px; pointer-events:none; animation: burst .7s ease-out forwards; }
+  @keyframes hop { 0%,100% { transform:translateY(0); } 40% { transform:translateY(-10px); } }
+  @keyframes burst { from { opacity:1; transform:translate(0,0) scale(.6); } to { opacity:0; transform:translate(var(--dx), var(--dy)) scale(1.1); } }
+  .confetti { position:fixed; top:-12px; width:9px; height:14px; border-radius:2px; z-index:20; pointer-events:none; animation: fall var(--t) linear forwards; }
+  @keyframes fall { to { transform:translate(var(--dx), 105vh) rotate(540deg); } }
+  @media (prefers-reduced-motion: reduce) { .pup.happy, .burst, .confetti { animation:none; } .confetti, .burst { display:none; } }
+
+  /* 짝맞추기 */
+  .match-grid { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; }
+  .mcard { aspect-ratio: 3 / 4; border:0; border-radius:16px; cursor:pointer; padding:4px; font:inherit; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:var(--primary); color:#fff; box-shadow:0 4px 0 var(--primary-dark); font-family:var(--round); font-size:22px; }
+  .mcard.open { background:var(--card); color:var(--text); box-shadow:var(--shadow-sm); font-family:'Noto Sans KR', sans-serif; font-size:13px; font-weight:700; word-break:break-word; line-height:1.25; }
+  .mcard.open.en { font-family:var(--round); font-size:15px; font-weight:400; }
+  .mcard.done { background:var(--ok-soft); color:var(--ok); box-shadow:none; cursor:default; }
+  .mcard.miss { background:#fdecef; }
+  @media (max-width:360px){ .mcard.open { font-size:12px; } .mcard.open.en { font-size:14px; } }
+
+  /* 게임 결과 */
+  .lvup { background:#5b43c4; color:#fff; border-radius:32px; padding:16px; box-shadow:0 7px 0 #432fa0; display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .lvup .pup { background:#fdf0f5; border-radius:50%; padding:4px; box-sizing:border-box; }
+  .lvup .t1 { font-family:var(--round); font-size:28px; line-height:1.1; }
+  .lvup .t2 { font-family:var(--round); font-size:17px; color:#e9e4ff; }
+  .lvup .t3 { font-size:13px; color:#e9e4ff; } .lvup .t3 b { color:#ffd36b; }
+  .lvup .btn { margin-top:8px; background:#fff; color:#4f38b5; box-shadow:none; padding:8px 14px; font-size:14px; }
+  .mini3 { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; width:100%; margin-top:6px; }
+  .newbadge { background:var(--card); border-radius:24px; padding:12px 16px; box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+
+  /* 배지 */
+  .bdg { width:50px; height:50px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:#fff4d6; border:3px solid #f7b928; color:#8a5a00; font-family:var(--round); font-size:16px; }
+  .bdg.off { background:#f3eff5; border-color:#ddd5e0; color:#8a8494; }
+  .badge-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+  .badge-card { background:var(--card); border-radius:22px; padding:14px 10px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+  .badge-card.off { background:#faf8fb; box-shadow:none; }
+  .badge-card .bn { font-family:var(--round); font-size:16px; }
+  .badge-card .bd { font-size:12px; color:var(--muted); }
+
+  /* 꾸미기 */
+  .closet-stage { width:180px; height:180px; border-radius:50%; background:var(--pink-softer); display:flex; align-items:center; justify-content:center; }
+  .items { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin-bottom:12px; }
+  .item { min-height:104px; border:3px solid transparent; border-radius:22px; background:var(--card); box-shadow:var(--shadow-sm); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font:inherit; color:var(--text); position:relative; padding:6px; }
+  .item.on { border-color:var(--primary); box-shadow:none; }
+  .item.locked { background:#f3eff5; box-shadow:none; color:var(--faint); cursor:default; }
+  .item.locked svg.ic { opacity:.35; }
+  .item .nm { font-size:14px; font-weight:700; }
+  .item .st { font-size:11px; font-weight:700; color:var(--muted); }
+  .item.on .st { color:var(--pink-text); }
+
   .note { max-width:688px; margin:12px auto 0; width:calc(100% - 32px); background:var(--warn-soft); color:#6b4500; border-radius:18px;
     padding:12px 14px; font-size:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between; }
   #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--bad-text); color:#fff; font-weight:700;
@@ -318,19 +414,34 @@
     <section id="s-list">
       <section class="card hero">
         <div class="hero-top">
-          <img src="mascot.png" alt="강아지 캐릭터">
-          <div class="bubble sm" id="heroMsg"></div>
+          <button class="pup-btn" id="toCloset" aria-label="강아지 꾸미기">
+            <span class="pup" id="heroPup"></span>
+            <span class="pup-edit">꾸미기</span>
+          </button>
+          <div class="lv-box">
+            <div class="lv-line"><span class="lv-chip" id="lvChip">Lv.1</span><span class="lv-title" id="lvTitle"></span></div>
+            <div class="xpbar"><div id="xpFill"></div></div>
+            <span class="xp-text" id="xpText"></span>
+          </div>
         </div>
+        <p class="hero-msg" id="heroMsg"></p>
         <div class="stats">
-          <div class="stat s1"><b id="stTotal">0</b><span>전체 단어</span></div>
-          <div class="stat s2"><b id="stWrong">0</b><span>오답 단어</span></div>
-          <div class="stat s3"><b id="stScore">-</b><span>최근 점수</span></div>
-        </div>
-        <div class="hero-btns">
-          <button class="btn primary big" id="goQuiz"></button>
-          <button class="btn big" id="goReview"></button>
+          <div class="stat s2"><b id="stStreak">0일</b><span>연속 공부</span></div>
+          <div class="stat s4"><b id="stLearned">0</b><span>외운 단어</span></div>
+          <button class="stat s1" id="toBadges"><b id="stBadges">0</b><span>모은 배지 ›</span></button>
         </div>
       </section>
+
+      <section class="card goal" id="goalCard"></section>
+
+      <h2 class="sec-title">무엇을 할까요?</h2>
+      <div class="modes">
+        <button class="mode" data-mode="quiz"><span class="mi m1" id="miQuiz"></span><span>퀴즈</span></button>
+        <button class="mode" data-mode="heart"><span class="mi m2" id="miHeart"></span><span>하트 모드</span></button>
+        <button class="mode" data-mode="time"><span class="mi m3" id="miTime"></span><span>60초 도전</span></button>
+        <button class="mode" data-mode="match"><span class="mi m4" id="miMatch"></span><span>짝맞추기</span></button>
+      </div>
+      <button class="review-row hidden" id="goReview"></button>
 
       <section class="card today" id="todayCard"></section>
 
@@ -365,6 +476,12 @@
         <div class="abc" style="margin:0 auto 12px">abc</div>
         <h2 style="margin-bottom:6px">영어 퀴즈</h2>
         <p class="muted" style="margin-top:0">뜻 고르기, 철자 쓰기, 듣기 문제가 섞여서 나와요.</p>
+        <div class="mode-pick" role="radiogroup" aria-label="퀴즈 방식">
+          <button type="button" role="radio" data-qmode="quiz" aria-checked="true">일반 퀴즈</button>
+          <button type="button" role="radio" data-qmode="heart" aria-checked="false">하트 모드</button>
+          <button type="button" role="radio" data-qmode="time" aria-checked="false">60초 도전</button>
+        </div>
+        <p class="muted" id="modeDesc" style="font-size:13px;margin:8px 0 0"></p>
         <div class="row" style="justify-content:center;margin-top:14px">
           <select id="quizCount">
             <option value="10">10문제</option>
@@ -377,16 +494,45 @@
       </div>
       <div id="quizBox" class="hidden">
         <div class="prog">
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="#f7b928" stroke="#e9a512" stroke-width="1" stroke-linejoin="round"></path></svg>
+          <span class="lv-chip" id="quizLv">Lv.1</span>
           <div class="track"><div id="quizBar"></div></div>
           <span class="count" id="quizProg"></span>
           <button class="circle-btn" id="quizQuit" aria-label="퀴즈 그만하기" title="그만하기" style="width:40px;height:40px;box-shadow:none;background:var(--pink-softer)">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9.5h13V10"></path><path d="M10 19.5v-5h4v5"></path></svg>
           </button>
         </div>
+        <div class="combo-row" id="comboRow"><span class="pup sm" id="quizPup"></span><span id="comboBadges"></span></div>
         <div id="quizCard"></div>
       </div>
+      <div id="matchBox" class="hidden">
+        <div class="prog">
+          <span class="lv-chip">짝맞추기</span>
+          <div class="track"><div id="matchBar"></div></div>
+          <span class="count" id="matchProg"></span>
+          <button class="circle-btn" id="matchQuit" aria-label="짝맞추기 그만하기" title="그만하기" style="width:40px;height:40px;box-shadow:none;background:var(--pink-softer)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10v9.5h13V10"></path><path d="M10 19.5v-5h4v5"></path></svg>
+          </button>
+        </div>
+        <p class="muted" style="text-align:center;margin:0 0 12px">카드를 두 장씩 뒤집어서 단어와 뜻의 짝을 찾아요</p>
+        <div class="match-grid" id="matchGrid"></div>
+      </div>
       <div id="quizResult" class="hidden"></div>
+    </section>
+
+    <section id="s-closet" class="hidden">
+      <div class="toolbar"><button class="btn sm" id="closetBack">← 단어장으로</button></div>
+      <section class="card" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div class="closet-stage"><span class="pup lg" id="closetPup"></span></div>
+        <div class="lv-line"><span class="lv-chip" id="closetLv">Lv.1</span><span class="muted">레벨이 오르면 새 아이템이 열려요</span></div>
+      </section>
+      <div class="items" id="closetItems"></div>
+      <div class="error" id="closetErr" style="text-align:center"></div>
+      <button class="btn primary big block" id="closetSave">이대로 저장하기</button>
+    </section>
+
+    <section id="s-badges" class="hidden">
+      <div class="toolbar"><button class="btn sm" id="badgesBack">← 단어장으로</button><span class="chip" id="badgeCount"></span></div>
+      <div class="badge-grid" id="badgeGrid"></div>
     </section>
 
     <section id="s-wrong" class="hidden">
@@ -448,7 +594,7 @@
       <div class="card">
         <div class="toolbar"><h2 style="margin:0">학생별 점수</h2><button class="btn sm" data-refresh="scores">새로고침</button></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>번호</th><th>이름</th><th class="num">최근</th><th class="num">평균</th><th class="num">푼 횟수</th><th>마지막</th></tr></thead>
+          <thead><tr><th>번호</th><th>이름</th><th class="num">레벨</th><th class="num">최근</th><th class="num">평균</th><th class="num">푼 횟수</th><th>마지막</th></tr></thead>
           <tbody id="scoreBody"></tbody>
         </table></div>
       </div>
@@ -474,6 +620,15 @@
           <button class="btn primary">저장</button>
         </form>
         <p class="muted" id="codeMsg"></p>
+      </div>
+      <div class="card">
+        <h2>우리 반 주간 목표</h2>
+        <p class="muted">반 전체가 이번 주(월~일)에 함께 채울 정답 수예요. 다 채우면 학생 화면에서 강아지 파티가 열려요.</p>
+        <form class="row" id="goalForm">
+          <input id="goalIn" type="number" inputmode="numeric" min="10" max="100000" required>
+          <button class="btn primary">저장</button>
+        </form>
+        <p class="muted" id="goalMsg"></p>
       </div>
     </section>
   </main>
@@ -516,6 +671,8 @@ const ERR_KO = {
   'Invalid login credentials': '이메일 또는 비밀번호가 맞지 않아요.',
   over_email_send_rate_limit: '메일을 너무 자주 보냈어요. 잠시 후 다시 시도해 주세요.',
   same_password: '이전과 다른 비밀번호를 정해 주세요.',
+  item_locked: '아직 열리지 않은 아이템이에요.',
+  one_per_slot: '같은 부위에는 아이템을 하나만 쓸 수 있어요.',
   weak_password: '비밀번호가 너무 쉬워요. 더 길게 정해 주세요.',
 };
 function errText(err){
@@ -665,12 +822,88 @@ $('#joinForm').onsubmit = async e => {
 let words = [];   // { id, en, ko, ex, wrong }
 let me = null;
 
-const showStudentTab = setupTabs('#sNav', 's-', ['list','flash','quiz','wrong'], t => {
+const showStudentTab = setupTabs('#sNav', 's-', ['list','flash','quiz','wrong','closet','badges'], t => {
+  if (t !== 'quiz') stopGames();
   if (t === 'list') renderStudentList();
   if (t === 'flash') startFlash();
   if (t === 'quiz') resetQuiz();
   if (t === 'wrong') renderWrong();
+  if (t === 'closet') renderCloset();
+  if (t === 'badges') renderBadges();
+  window.scrollTo(0, 0);
 });
+
+/* ---------- 게임 요소 (기획서 4-6절) ---------- */
+let prog = null;   // 서버의 내 진행 상황 (vocab_my_progress)
+const ITEMS = {
+  ribbon:  { name: '리본',     slot: 'head', lv: 1,  pos: 'right:6%;top:0;width:36%;transform:rotate(18deg)',
+             svg: '<path d="M12 12 L4 7 L4 17 Z" fill="#f06a9b"/><path d="M12 12 L20 7 L20 17 Z" fill="#f06a9b"/><circle cx="12" cy="12" r="2.6" fill="#c93a73"/>', vb: '0 0 24 24' },
+  hat:     { name: '고깔모자', slot: 'head', lv: 3,  pos: 'left:33%;top:-18%;width:38%;transform:rotate(-12deg)',
+             svg: '<path d="M12 3 L20 26 H4 Z" fill="#f7b928"/><path d="M8 15 L16 15 L17.5 19.5 L6.5 19.5 Z" fill="#f06a9b"/><circle cx="12" cy="3" r="2.6" fill="#8b6cf0"/>', vb: '0 0 24 28' },
+  glasses: { name: '별 안경',  slot: 'face', lv: 5,  pos: 'left:26%;top:34%;width:44%',
+             svg: '<path d="M10 2l2.4 5 5.4.6-4 3.7 1.1 5.4L10 14l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z" fill="none" stroke="#e9a512" stroke-width="2.4" stroke-linejoin="round"/><path d="M38 2l2.4 5 5.4.6-4 3.7 1.1 5.4L38 14l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z" fill="none" stroke="#e9a512" stroke-width="2.4" stroke-linejoin="round"/><path d="M19 9h10" stroke="#e9a512" stroke-width="2.4" stroke-linecap="round"/>', vb: '0 0 48 20' },
+  scarf:   { name: '목도리',   slot: 'neck', lv: 7,  pos: 'left:24%;top:55%;width:44%',
+             svg: '<path d="M2 5 Q16 11 30 5 L30 10 Q16 16 2 10 Z" fill="#2fa7a0"/><path d="M19 11 L24 10 L23 21 L18 21 Z" fill="#24877f"/><path d="M6 8 Q16 12.5 26 8" fill="none" stroke="#7fd3c9" stroke-width="1.2"/>', vb: '0 0 32 24' },
+  flower:  { name: '꽃',       slot: 'head', lv: 10, pos: 'right:6%;top:0;width:32%',
+             svg: '<circle cx="12" cy="6.5" r="3.5" fill="#f06a9b"/><circle cx="17.5" cy="12" r="3.5" fill="#f06a9b"/><circle cx="12" cy="17.5" r="3.5" fill="#f06a9b"/><circle cx="6.5" cy="12" r="3.5" fill="#f06a9b"/><circle cx="12" cy="12" r="3" fill="#f7b928"/>', vb: '0 0 24 24' },
+  crown:   { name: '왕관',     slot: 'head', lv: 15, pos: 'left:30%;top:-10%;width:40%',
+             svg: '<path d="M3 18 L5 7 L9 12 L12 5 L15 12 L19 7 L21 18 Z" fill="#f7b928" stroke="#e9a512" stroke-width="1"/>', vb: '0 0 24 24' },
+};
+const BADGES = [
+  ['first_quiz', '첫 도전', '퀴즈를 처음 풀었어요', '1'],
+  ['score90', '90점 돌파', '처음으로 90점 넘기기', '90'],
+  ['perfect', '만점왕', '10문제 이상 퀴즈 100점', '100'],
+  ['combo10', '콤보 마스터', '10콤보 달성', 'x10'],
+  ['streak3', '3일 연속', '3일 연속 공부', '3일'],
+  ['streak7', '일주일 개근', '7일 연속 공부', '7일'],
+  ['learned10', '단어 수집가', '단어 10개 외우기', '10'],
+  ['learned50', '단어 박사', '단어 50개 외우기', '50'],
+  ['heart20', '끈기왕', '하트 모드 20문제 맞히기', '♥20'],
+  ['time15', '번개 손', '60초 도전 15개 맞히기', '15'],
+  ['match_clear', '짝꿍 찾기', '짝맞추기 완성', '짝'],
+];
+const BADGE_BY = Object.fromEntries(BADGES.map(b => [b[0], b]));
+const lvTitle = l => l >= 15 ? '단어 왕' : l >= 10 ? '단어 박사' : l >= 7 ? '단어 모험가' : l >= 5 ? '꼬마 탐험가' : l >= 3 ? '단어 탐색가' : '새싹 단어러';
+function itemSvg(key, cls = 'it'){
+  const it = ITEMS[key]; if (!it) return '';
+  return `<svg class="${cls}" viewBox="${it.vb}" style="${cls === 'it' ? it.pos : ''}" aria-hidden="true">${it.svg}</svg>`;
+}
+function puppyInner(items){
+  return `<img class="base" src="mascot.png" alt="">` + (items || []).map(k => itemSvg(k)).join('');
+}
+function setPup(el, items, label){
+  el.innerHTML = puppyInner(items);
+  el.setAttribute('role', 'img');
+  el.setAttribute('aria-label', label || '강아지 캐릭터');
+}
+async function loadProgress(){
+  const { data, error } = await sb.rpc('vocab_my_progress');
+  if (!error) prog = data;
+  return prog;
+}
+function burst(el){
+  const colors = ['#f7b928', '#f06a9b', '#8b6cf0', '#2fa772'];
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('span');
+    s.className = 'burst';
+    const a = (Math.PI * 2 * i) / 6;
+    s.style.cssText = `left:40%;top:40%;--dx:${Math.cos(a) * 40}px;--dy:${Math.sin(a) * 40}px`;
+    s.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="${colors[i % 4]}"/></svg>`;
+    el.appendChild(s);
+    setTimeout(() => s.remove(), 800);
+  }
+}
+function confetti(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#f06a9b', '#f7b928', '#8b6cf0', '#2fa772', '#e8702a'];
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('span');
+    c.className = 'confetti';
+    c.style.cssText = `left:${Math.random() * 100}vw;background:${colors[i % 5]};--dx:${(Math.random() - .5) * 120}px;--t:${1.6 + Math.random() * 1.4}s;animation-delay:${Math.random() * .4}s`;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+}
 
 async function startStudent(info){
   me = info;
@@ -678,14 +911,13 @@ async function startStudent(info){
   showScreen('student');
   $('#sWordList').innerHTML = '<div class="empty">불러오는 중…</div>';
   try {
-    const [ws, stats, recent] = await Promise.all([
+    const [ws, stats] = await Promise.all([
       db(sb.from('vocab_words').select('id,en,ko,ex').order('en')),
       db(sb.from('vocab_word_stats').select('word_id,wrong')),
-      db(sb.from('vocab_attempts').select('score').order('created_at', { ascending: false }).limit(1)),
+      loadProgress(),
     ]);
     const wrongBy = Object.fromEntries(stats.map(s => [s.word_id, s.wrong]));
     words = ws.map(w => ({ ...w, wrong: wrongBy[w.id] || 0 }));
-    lastScore = recent[0]?.score ?? null;
   } catch (_) { words = []; }
   showStudentTab('list');
 }
@@ -711,21 +943,54 @@ function wordItem(w, opts = {}){
 }
 
 $('#sSearch').oninput = renderStudentList;
-let lastScore = null;   // 내 최근 퀴즈 점수
-$('#goQuiz').innerHTML = `${svg('<path d="M9 4h6l1 4H8z"></path><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M9 14h6"></path>', 20)} 퀴즈 풀기`;
-$('#goReview').innerHTML = `${ICON.cards(20)} 오답 복습`;
-$('#goQuiz').onclick = () => showStudentTab('quiz');
+$('#miQuiz').innerHTML = svg('<path d="M9 4h6l1 4H8z"></path><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M9 14h6"></path>', 22);
+$('#miHeart').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>';
+$('#miTime').innerHTML = svg('<circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M10 2h4"></path>', 22);
+$('#miMatch').innerHTML = svg('<rect x="3" y="4" width="8" height="10" rx="2"></rect><rect x="13" y="10" width="8" height="10" rx="2"></rect>', 22);
+document.querySelectorAll('.modes .mode').forEach(b => b.onclick = () => {
+  const m = b.dataset.mode;
+  showStudentTab('quiz');
+  if (m === 'match') startMatch(); else if (words.length >= 4) startQuiz(m);
+});
 $('#goReview').onclick = () => { $('#flashSet').value = 'wrong'; showStudentTab('flash'); };
+$('#toCloset').onclick = () => showStudentTab('closet');
+$('#toBadges').onclick = () => showStudentTab('badges');
+$('#closetBack').onclick = () => showStudentTab('list');
+$('#badgesBack').onclick = () => showStudentTab('list');
 
 function renderHero(){
   const wrongN = words.filter(w => w.wrong > 0).length;
-  $('#stTotal').textContent = words.length;
-  $('#stWrong').textContent = wrongN;
-  $('#stScore').textContent = lastScore ?? '-';
-  $('#heroMsg').textContent = wrongN ? `오답 단어가 ${wrongN}개 있어요. 같이 복습해요!`
-    : lastScore == null ? `${me?.name || ''}, 첫 퀴즈에 도전해 볼까요?`
-    : lastScore === 100 ? '지난 퀴즈 100점! 정말 멋져요'
-    : `${me?.name || ''}, 오늘도 같이 외워요!`;
+  const p = prog || { level: 1, into_level: 0, need: 100, streak_days: 0, learned: 0, badges: [], equipped: [], goal: null };
+  setPup($('#heroPup'), p.equipped, '내 강아지');
+  $('#lvChip').textContent = `Lv.${p.level}`;
+  $('#lvTitle').textContent = lvTitle(p.level);
+  $('#xpFill').style.width = Math.round(p.into_level / p.need * 100) + '%';
+  $('#xpText').textContent = `${p.into_level} / ${p.need} XP`;
+  $('#stStreak').textContent = `${p.streak_days}일`;
+  $('#stLearned').textContent = p.learned;
+  $('#stBadges').textContent = p.badges.length;
+  const g = p.goal, goalDone = g && g.total >= g.target;
+  $('#heroMsg').textContent = goalDone ? '우리 반 주간 목표 달성! 강아지 파티 중이에요'
+    : wrongN ? `오답 단어가 ${wrongN}개 있어요. 복습하면 경험치도 받아요!`
+    : p.streak_days ? `${p.streak_days}일 연속 공부 중! 오늘도 이어 가요`
+    : `${me?.name || ''}, 퀴즈를 풀고 경험치를 모아 봐요!`;
+  // 반 목표
+  const gc = $('#goalCard');
+  if (!g) gc.classList.add('hidden');
+  else {
+    gc.classList.remove('hidden');
+    gc.classList.toggle('done', goalDone);
+    gc.innerHTML = `
+      <div class="goal-head"><span class="goal-chip">우리 반 이번 주 목표</span><span class="muted" style="font-size:12px">${goalDone ? '달성!' : g.days_left > 0 ? `${g.days_left}일 남음` : '오늘까지'}</span></div>
+      <div class="goal-num">${g.total} <small>/ ${g.target} 정답</small></div>
+      <div class="goal-bar"><div style="width:${Math.min(100, Math.round(g.total / g.target * 100))}%"></div></div>
+      <span class="muted" style="font-size:13px">${goalDone ? '모두 함께 해냈어요! 강아지 파티가 열렸어요.' : '다 채우면 모두의 화면에서 <b style="color:var(--primary)">강아지 파티</b>가 열려요.'} 내가 보탠 정답 ${g.mine}개</span>`;
+    if (goalDone && !renderHero.partied) { renderHero.partied = true; setTimeout(confetti, 300); }
+  }
+  // 오답 복습 바로가기
+  const rv = $('#goReview');
+  rv.classList.toggle('hidden', !wrongN);
+  rv.innerHTML = `<span>오답 복습하기 · ${wrongN}개</span><span aria-hidden="true">›</span>`;
 }
 
 // 오늘의 단어: 날짜마다 바뀌고, 같은 날에는 모두 같은 단어
@@ -822,29 +1087,74 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') flashAnswer(false);
 });
 
-/* ---------- 퀴즈 (기획서 4장) ---------- */
+/* ---------- 퀴즈 (기획서 4장) + 게임 모드 (4-6절) ---------- */
 const QTYPES = ['en2ko', 'ko2en', 'spell', 'listen'];
-const QLABEL = { en2ko: '뜻 고르기', ko2en: '단어 고르기', spell: '철자 쓰기', listen: '듣고 고르기' };
+const QLABEL = { en2ko: '뜻 고르기', ko2en: '단어 고르기', spell: '철자 쓰기', listen: '듣고 고르기', match: '짝맞추기' };
+const MODE_DESC = {
+  quiz: '정해진 문제 수만큼 풀어요.',
+  heart: '하트 3개로 시작해요. 다 잃을 때까지 몇 문제를 맞히나 도전!',
+  time: '60초 동안 최대한 많이 맞혀요.',
+};
+const FLAME = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2.5 1.2-4 2.5-5 .2 2 1 3 2 3.5C11 9 10.8 5 12 2z" fill="#ffd36b"/></svg>';
+const heartSvg = on => `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="${on ? '#e2455f' : '#e8dde6'}"/></svg>`;
 let qs = [], qi = 0, answers = [], locked = false, nextTimer = null;
+let qMode = 'quiz', pickMode = 'quiz', combo = 0, maxCombo = 0, hearts = 3, timeLeft = 0, timeTimer = null, gameOver = true;
+let matchTimer = null, matchCards = [], mFirst = null, mLock = false, mStart = 0, mDone = 0, mPairs = 0, mMistakes = 0, mMissed = new Set(), mWords = [];
 
+function stopGames(){
+  gameOver = true;
+  clearTimeout(nextTimer); clearInterval(timeTimer); clearInterval(matchTimer);
+}
+document.querySelectorAll('.mode-pick button').forEach(b => b.onclick = () => setPickMode(b.dataset.qmode));
+function setPickMode(m){
+  pickMode = m;
+  document.querySelectorAll('.mode-pick button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.qmode === m)));
+  $('#modeDesc').textContent = MODE_DESC[m];
+  $('#quizCount').classList.toggle('hidden', m !== 'quiz');
+}
 function resetQuiz(){
-  clearTimeout(nextTimer);
-  $('#quizSetup').classList.remove('hidden'); $('#quizBox').classList.add('hidden'); $('#quizResult').classList.add('hidden');
+  stopGames();
+  ['quizBox', 'matchBox', 'quizResult'].forEach(id => $('#' + id).classList.add('hidden'));
+  $('#quizSetup').classList.remove('hidden');
+  setPickMode(pickMode);
   $('#quizWarn').textContent = words.length < 4 ? '퀴즈를 하려면 단어가 4개 이상 필요해요.' : '';
   $('#quizStart').disabled = words.length < 4;
 }
-$('#quizQuit').onclick = () => { if (confirm('퀴즈를 그만할까요? 지금까지 푼 문제는 저장되지 않아요.')) resetQuiz(); };
-$('#quizStart').onclick = () => {
-  const n = Math.min(+$('#quizCount').value || words.length, words.length);
-  // 오답노트 단어 먼저, 같은 단어는 한 번만
+$('#quizQuit').onclick = () => { if (confirm('그만할까요? 지금까지 푼 문제는 결과로 저장되지 않아요.')) resetQuiz(); };
+$('#quizStart').onclick = () => startQuiz(pickMode);
+
+// 오답노트 단어 먼저, 한 묶음 안에서 같은 단어는 한 번만, 유형은 돌아가며 배정
+function buildQuestions(n){
   const pool = [...shuffle(words.filter(w => w.wrong > 0)), ...shuffle(words.filter(w => !w.wrong))].slice(0, n);
-  // 유형은 돌아가며 배정해서 비슷한 비율로 섞음
   const offset = Math.floor(Math.random() * QTYPES.length);
-  qs = shuffle(pool.map((w, i) => ({ w, type: QTYPES[(i + offset) % QTYPES.length] })));
-  qi = 0; answers = [];
-  $('#quizSetup').classList.add('hidden'); $('#quizBox').classList.remove('hidden');
-  drawQuiz();
-};
+  return shuffle(pool.map((w, i) => ({ w, type: QTYPES[(i + offset) % QTYPES.length] })));
+}
+function startQuiz(mode){
+  if (words.length < 4) { resetQuiz(); return; }
+  stopGames(); gameOver = false;
+  qMode = mode; combo = 0; maxCombo = 0; hearts = 3; qi = 0; answers = [];
+  if (mode === 'quiz') qs = buildQuestions(Math.min(+$('#quizCount').value || words.length, words.length));
+  else { qs = []; for (let k = 0; k < 6; k++) qs = qs.concat(buildQuestions(words.length)); }   // 하트·60초는 계속 이어지는 문제
+  ['quizSetup', 'matchBox', 'quizResult'].forEach(id => $('#' + id).classList.add('hidden'));
+  $('#quizBox').classList.remove('hidden');
+  $('#quizLv').textContent = `Lv.${prog?.level || 1}`;
+  setPup($('#quizPup'), prog?.equipped, '내 강아지');
+  $('#quizPup').className = 'pup sm';
+  $('#comboBadges').innerHTML = '';
+  if (mode === 'time') {
+    timeLeft = 60;
+    timeTimer = setInterval(() => { timeLeft--; updateQuizProg(); if (timeLeft <= 0) endQuiz(); }, 1000);
+  }
+  updateQuizProg(); drawQuiz(); window.scrollTo(0, 0);
+}
+function updateQuizProg(){
+  const bar = $('#quizBar'), p = $('#quizProg');
+  if (qMode === 'quiz') { bar.style.width = (qi / qs.length * 100) + '%'; p.textContent = `${Math.min(qi + 1, qs.length)} / ${qs.length}`; }
+  else if (qMode === 'heart') {
+    bar.style.width = Math.min(100, answers.filter(a => a.is_correct).length * 5) + '%';
+    p.innerHTML = `<span class="hearts" role="img" aria-label="하트 ${hearts}개">${[0, 1, 2].map(i => heartSvg(i < hearts)).join('')}</span>`;
+  } else { bar.style.width = (Math.max(0, timeLeft) / 60 * 100) + '%'; p.textContent = `${Math.max(0, timeLeft)}초`; }
+}
 
 function choicesFor(w, key){
   const seen = new Set([w[key]]), others = [];
@@ -859,10 +1169,10 @@ function hintCells(en){
     : i === 0 ? `<span class="first">${esc(ch)}</span>` : '<span></span>').join('');
 }
 function drawQuiz(){
+  if (gameOver) return;
   locked = false;
   const { w, type } = qs[qi];
-  $('#quizBar').style.width = (qi / qs.length * 100) + '%';
-  $('#quizProg').textContent = `${qi+1} / ${qs.length}`;
+  updateQuizProg();
   const card = $('#quizCard');
   const chip = `<span class="chip">${QLABEL[type]}</span>`;
 
@@ -946,44 +1256,227 @@ function answerSpell(w){
 }
 
 function record(w, type, ok, given){
+  if (gameOver) return;
   mark(w, ok);
   answers.push({ word_id: w.id, qtype: type, is_correct: ok, answer: given, _w: w, _type: type });
-  nextTimer = setTimeout(() => { qi++; qi < qs.length ? drawQuiz() : quizDone(); }, ok ? 800 : (type === 'spell' ? 2200 : 1700));
+  // 콤보·강아지 반응 (경험치 표시는 서버 규칙과 같음: 정답 10, 3콤보부터 15)
+  const pup = $('#quizPup');
+  pup.classList.remove('happy', 'sad'); void pup.offsetWidth;
+  if (ok) {
+    combo++; maxCombo = Math.max(maxCombo, combo);
+    pup.classList.add('happy'); burst(pup);
+    $('#comboBadges').innerHTML = (combo >= 3 ? `<span class="combo">${FLAME} ${combo}콤보!</span>` : '') + `<span class="xp-pop">+${combo >= 3 ? 15 : 10} XP</span>`;
+  } else {
+    combo = 0; pup.classList.add('sad'); $('#comboBadges').innerHTML = '';
+    if (qMode === 'heart') hearts--;
+  }
+  updateQuizProg();
+  const fast = qMode === 'time';
+  const delay = ok ? (fast ? 450 : 800) : (fast ? 1000 : type === 'spell' ? 2200 : 1700);
+  nextTimer = setTimeout(() => {
+    if (gameOver) return;
+    if (qMode === 'heart' && hearts <= 0) return endQuiz();
+    qi++;
+    if (qi >= qs.length) return endQuiz();
+    drawQuiz();
+  }, delay);
 }
 
-async function quizDone(){
+async function endQuiz(){
+  if (gameOver && !answers.length && qMode !== 'time') return;
+  stopGames();
   $('#quizBox').classList.add('hidden');
-  const total = answers.length, score = answers.filter(a => a.is_correct).length;
-  const pct = Math.round(score / total * 100);
-  const stars = Math.round(pct / 20);
-  const missed = answers.filter(a => !a.is_correct);
-  const msg = pct === 100 ? '완벽해요! 다 맞혔어요' : pct >= 70 ? '잘했어요! 거의 다 맞혔어요' : pct >= 40 ? '좋아요! 조금만 더 해 봐요' : '괜찮아요, 다시 해 봐요!';
+  await showGameResult(qMode, answers, { maxCombo });
+}
+
+/* ---------- 짝맞추기 ---------- */
+$('#matchQuit').onclick = () => { if (confirm('짝맞추기를 그만할까요?')) resetQuiz(); };
+$('#matchGrid').onclick = e => { const b = e.target.closest('.mcard'); if (b) flipCard(b); };
+function startMatch(){
+  if (words.length < 4) { resetQuiz(); return; }
+  stopGames(); gameOver = false;
+  mWords = [...shuffle(words.filter(w => w.wrong > 0)), ...shuffle(words.filter(w => !w.wrong))].slice(0, Math.min(8, words.length));
+  mPairs = mWords.length; mDone = 0; mMistakes = 0; mMissed = new Set(); mFirst = null; mLock = false;
+  matchCards = shuffle(mWords.flatMap(w => [{ id: w.id, side: 'en', text: w.en }, { id: w.id, side: 'ko', text: w.ko }]));
+  $('#matchGrid').innerHTML = matchCards.map((c, i) => `<button class="mcard" data-i="${i}" data-id="${c.id}" aria-label="뒤집힌 카드">?</button>`).join('');
+  ['quizSetup', 'quizBox', 'quizResult'].forEach(id => $('#' + id).classList.add('hidden'));
+  $('#matchBox').classList.remove('hidden');
+  mStart = Date.now();
+  matchTimer = setInterval(updateMatchProg, 1000); updateMatchProg();
+  window.scrollTo(0, 0);
+}
+function updateMatchProg(){
+  $('#matchBar').style.width = (mDone / mPairs * 100) + '%';
+  $('#matchProg').textContent = `${mDone}/${mPairs} · ${Math.floor((Date.now() - mStart) / 1000)}초`;
+}
+function flipCard(b){
+  if (gameOver || mLock || b.classList.contains('open') || b.classList.contains('done')) return;
+  const c = matchCards[b.dataset.i];
+  b.classList.add('open', c.side); b.textContent = c.text; b.setAttribute('aria-label', c.text);
+  if (c.side === 'en') speak(c.text);
+  if (!mFirst) { mFirst = b; return; }
+  const a = mFirst; mFirst = null;
+  if (a.dataset.id === b.dataset.id) {
+    [a, b].forEach(x => x.classList.add('done'));
+    mDone++; updateMatchProg();
+    if (mDone === mPairs) finishMatch();
+  } else {
+    mMistakes++; mMissed.add(a.dataset.id); mMissed.add(b.dataset.id);
+    [a, b].forEach(x => x.classList.add('miss'));
+    mLock = true;
+    setTimeout(() => {
+      [a, b].forEach(x => { x.classList.remove('open', 'en', 'ko', 'miss'); x.textContent = '?'; x.setAttribute('aria-label', '뒤집힌 카드'); });
+      mLock = false;
+    }, 800);
+  }
+}
+function finishMatch(){
+  clearInterval(matchTimer);
+  const seconds = Math.round((Date.now() - mStart) / 1000);
+  const ans = mWords.map(w => ({ word_id: w.id, qtype: 'match', is_correct: !mMissed.has(w.id), answer: '', _w: w, _type: 'match' }));
+  gameOver = true;
+  setTimeout(async () => { $('#matchBox').classList.add('hidden'); await showGameResult('match', ans, { seconds, mistakes: mMistakes }); }, 600);
+}
+
+/* ---------- 게임 결과 ---------- */
+async function showGameResult(mode, ans, extra = {}){
   const r = $('#quizResult'); r.classList.remove('hidden');
+  r.innerHTML = '<div class="card empty">결과를 저장하고 있어요…</div>';
+  window.scrollTo(0, 0);
+  const before = prog ? { ...prog } : null;
+  let res = null;
+  if (ans.length) {
+    const { data, error } = await sb.rpc('vocab_save_attempt', { p_answers: ans.map(({ _w, _type, ...a }) => a), p_mode: mode });
+    if (error) toast(error); else { res = data; await loadProgress(); }
+  }
+  renderGameResult(mode, ans, res, extra, before);
+}
+function miniStat(cls, value, label){
+  return `<div class="stat ${cls}"><b>${value}</b><span>${label}</span></div>`;
+}
+function renderGameResult(mode, ans, res, extra, before){
+  const total = ans.length, ok = ans.filter(a => a.is_correct).length;
+  const pct = total ? Math.round(ok / total * 100) : 0;
+  const missed = mode === 'match' ? [] : ans.filter(a => !a.is_correct);
+  const p = prog || { level: 1, into_level: 0, need: 100, streak_days: 0, equipped: [] };
+  const lvUp = res && res.level_after > res.level_before;
+  const newItems = (res?.new_items || []).filter(k => ITEMS[k]);
+  const newBadges = (res?.new_badges || []).filter(k => BADGE_BY[k]);
+  let big, sub, msg;
+  if (mode === 'quiz') {
+    big = `<span class="num">${pct}</span><span class="unit">점</span>`;
+    sub = `${total}문제 중 ${ok}개 정답`;
+    msg = pct === 100 ? '완벽해요! 다 맞혔어요' : pct >= 70 ? '잘했어요! 거의 다 맞혔어요' : pct >= 40 ? '좋아요! 조금만 더 해 봐요' : '괜찮아요, 다시 해 봐요!';
+  } else if (mode === 'heart') {
+    const best = res?.best_heart ?? '-', record = res && ok > 0 && ok > (before?.best_heart ?? 0);
+    big = `<span class="num">${ok}</span><span class="unit">문제</span>`;
+    sub = `하트 3개로 ${ok}문제를 맞혔어요 · 내 최고 ${best}`;
+    msg = record ? '새 최고 기록이에요!' : '끝까지 잘 버텼어요!';
+  } else if (mode === 'time') {
+    const best = res?.best_time ?? '-', record = res && ok > 0 && ok > (before?.best_time ?? 0);
+    big = `<span class="num">${ok}</span><span class="unit">개</span>`;
+    sub = `60초 동안 ${total}문제 중 ${ok}개 정답 · 내 최고 ${best}`;
+    msg = record ? '새 최고 기록이에요!' : total ? '번개처럼 풀었어요!' : '이번엔 한 문제도 못 풀었어요';
+  } else {
+    big = `<span class="num">${extra.seconds}</span><span class="unit">초</span>`;
+    sub = `${total}쌍 완성 · 실수 ${extra.mistakes}번`;
+    msg = extra.mistakes === 0 ? '실수 없이 완벽해요!' : '짝을 모두 찾았어요!';
+  }
+  const stars = Math.round(pct / 20);
+  const r = $('#quizResult');
   r.innerHTML = `
-    <div class="res-head"><img src="mascot.png" alt="강아지 캐릭터"><div class="bubble">${msg}</div></div>
+    ${lvUp ? `<section class="lvup">
+      <span class="pup" id="lvupPup"></span>
+      <div>
+        <div class="t1">레벨 업!</div>
+        <div class="t2">Lv.${res.level_before} → Lv.${res.level_after} ${lvTitle(res.level_after)}</div>
+        ${newItems.length ? `<div class="t3">새 아이템 <b>${newItems.map(k => ITEMS[k].name).join(', ')}</b>이(가) 열렸어요</div>
+        <button class="btn" id="goDress">꾸미러 가기</button>` : ''}
+      </div>
+    </section>` : ''}
+    <div class="res-head"><span class="pup lg" id="resPup" style="width:104px;height:106px"></span><div class="bubble">${msg}</div></div>
     <section class="card score">
-      <div><span class="num">${pct}</span><span class="unit">점</span></div>
-      <div class="stars" role="img" aria-label="별 5개 중 ${stars}개">${[0,1,2,3,4].map(i => star(i < stars)).join('')}</div>
-      <b>${total}문제 중 ${score}개 정답</b>
-      <span class="saved" id="saveMsg">결과 저장 중…</span>
+      <div>${big}</div>
+      ${mode === 'quiz' ? `<div class="stars" role="img" aria-label="별 5개 중 ${stars}개">${[0, 1, 2, 3, 4].map(i => star(i < stars)).join('')}</div>` : ''}
+      <b>${sub}</b>
+      <div class="mini3">
+        ${mode === 'match' ? miniStat('s2', extra.mistakes, '실수') : miniStat('s2', extra.maxCombo ?? 0, '최고 콤보')}
+        ${miniStat('s3', res ? '+' + res.xp_gained : '-', '얻은 경험치')}
+        ${miniStat('s1', p.streak_days + '일', '연속 공부')}
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:#4f38b5">Lv.${p.level}</span><span class="muted" style="font-size:13px">다음 레벨까지 ${p.need - p.into_level} XP</span></div>
+        <div class="xpbar"><div id="resXp" style="width:0"></div></div>
+      </div>
+      <span class="saved ${res || !total ? '' : 'err'}">${res ? `${ICON.check(16)} 결과가 저장됐어요` : total ? '결과를 저장하지 못했어요' : '푼 문제가 없어서 저장하지 않았어요'}</span>
     </section>
-    ${missed.length ? `<h2 style="margin:0 4px 10px">틀린 단어 ${missed.length}개</h2>
+    ${newBadges.map(k => `<section class="newbadge"><div class="bdg">${esc(BADGE_BY[k][3])}</div>
+      <div><div style="font-size:12px;font-weight:700;color:var(--warn)">새 배지를 받았어요</div><div class="round" style="font-size:19px">${esc(BADGE_BY[k][1])}</div></div></section>`).join('')}
+    ${missed.length ? `<h2 style="margin:6px 4px 10px">틀린 단어 ${missed.length}개</h2>
       <div class="miss-grid">${missed.map(a => `<div class="miss">
         ${a._w.wrong ? `<span class="badge">✕ ${a._w.wrong}</span>` : ''}
         <button class="icon" aria-label="${esc(a._w.en)} 발음 듣기" data-speak="${esc(a._w.en)}">${ICON.speaker(20)}</button>
         <span class="en">${esc(a._w.en)}</span><span class="ko">${esc(a._w.ko)}</span><span class="ty">${QLABEL[a._type]}</span>
       </div>`).join('')}</div>` : ''}
     <div class="res-btns">
-      <button class="btn primary big" id="again">${ICON.redo(22)} 다시 풀기</button>
+      <button class="btn primary big" id="again">${ICON.redo(22)} 다시 하기</button>
       ${missed.length ? `<button class="btn big" id="review">${ICON.cards(22)} 오답 복습하기</button>` : ''}
+      <button class="btn big" id="toHome">단어장으로</button>
     </div>`;
-  $('#again').onclick = resetQuiz;
+  setPup($('#resPup'), p.equipped, '내 강아지');
+  if (lvUp) setPup($('#lvupPup'), ['hat'], '고깔모자를 쓴 강아지');
+  requestAnimationFrame(() => { const x = $('#resXp'); if (x) x.style.width = Math.round(p.into_level / p.need * 100) + '%'; });
+  $('#again').onclick = () => mode === 'match' ? startMatch() : startQuiz(mode);
   if (missed.length) $('#review').onclick = () => { $('#flashSet').value = 'wrong'; showStudentTab('flash'); };
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  const { error } = await sb.rpc('vocab_save_attempt', { p_answers: answers.map(({ _w, _type, ...a }) => a) });
-  const sm = $('#saveMsg');
-  if (error) { sm.classList.add('err'); sm.textContent = '결과를 저장하지 못했어요'; toast(error); }
-  else { sm.innerHTML = `${ICON.check(16)} 결과가 저장됐어요`; lastScore = pct; }
+  $('#toHome').onclick = () => showStudentTab('list');
+  if (newItems.length) $('#goDress').onclick = () => showStudentTab('closet');
+  if (lvUp || (mode === 'quiz' && pct === 100 && total)) confetti();
+}
+
+/* ---------- 강아지 꾸미기 ---------- */
+let closetSel = [], closetKeep = false;
+const LOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function renderCloset(){
+  const lv = prog?.level || 1;
+  if (!closetKeep) closetSel = [...(prog?.equipped || [])];
+  closetKeep = false;
+  setPup($('#closetPup'), closetSel, '꾸민 강아지 미리보기');
+  $('#closetLv').textContent = `Lv.${lv}`;
+  $('#closetErr').textContent = '';
+  $('#closetItems').innerHTML = Object.entries(ITEMS).map(([k, it]) => {
+    const locked = lv < it.lv, on = closetSel.includes(k);
+    return `<button class="item ${locked ? 'locked' : ''} ${on ? 'on' : ''}" data-item="${k}" ${locked ? 'disabled' : ''} aria-pressed="${on}"
+      aria-label="${it.name}${locked ? `, 레벨 ${it.lv}에 열림` : on ? ', 착용 중' : ''}">
+      <svg class="ic" width="40" height="36" viewBox="${it.vb}" aria-hidden="true">${it.svg}</svg>
+      <span class="nm">${it.name}</span>
+      <span class="st" style="display:flex;align-items:center;gap:3px">${locked ? `${LOCK} Lv.${it.lv}` : on ? '착용 중' : `Lv.${it.lv}`}</span>
+    </button>`;
+  }).join('');
+}
+$('#closetItems').onclick = e => {
+  const b = e.target.closest('.item'); if (!b || b.disabled) return;
+  const k = b.dataset.item, slot = ITEMS[k].slot;
+  closetSel = closetSel.includes(k) ? closetSel.filter(x => x !== k) : [...closetSel.filter(x => ITEMS[x].slot !== slot), k];
+  closetKeep = true; renderCloset();
+};
+$('#closetSave').onclick = async () => {
+  $('#closetSave').disabled = true;
+  const { data, error } = await sb.rpc('vocab_equip', { p_items: closetSel });
+  $('#closetSave').disabled = false;
+  if (error) { $('#closetErr').textContent = errText(error); return; }
+  if (prog) prog.equipped = data;
+  showStudentTab('list');
+};
+
+/* ---------- 배지 ---------- */
+function renderBadges(){
+  const have = new Set(prog?.badges || []);
+  $('#badgeCount').textContent = `${have.size} / ${BADGES.length}`;
+  $('#badgeGrid').innerHTML = BADGES.map(([code, name, desc, mk]) => {
+    const on = have.has(code);
+    return `<div class="badge-card ${on ? '' : 'off'}"><div class="bdg ${on ? '' : 'off'}">${on ? esc(mk) : LOCK}</div>
+      <span class="bn">${esc(name)}</span><span class="bd">${esc(desc)}</span></div>`;
+  }).join('');
 }
 
 /* ---------- 오답노트 ---------- */
@@ -1155,17 +1648,18 @@ $('#exportBtn').onclick = () => {
 const fmtDate = s => s ? new Date(s).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
 async function loadScores(){
   const body = $('#scoreBody');
-  body.innerHTML = '<tr><td colspan="6" class="empty">불러오는 중…</td></tr>';
+  body.innerHTML = '<tr><td colspan="7" class="empty">불러오는 중…</td></tr>';
   try {
     const rows = await db(sb.rpc('vocab_teacher_students'));
     body.innerHTML = rows.length ? rows.map(r => `<tr>
       <td>${r.number}</td>
       <td style="white-space:nowrap">${esc(r.name)} <button class="icon plain" style="display:inline-flex;vertical-align:middle;width:36px;height:36px" aria-label="${esc(r.name)} 이름 고치기" data-rename="${r.student_id}" data-name="${esc(r.name)}">${ICON.edit(18)}</button></td>
+      <td class="num">Lv.${r.level ?? 1}</td>
       <td class="num">${r.recent_score ?? '-'}</td>
       <td class="num">${r.avg_score ?? '-'}</td>
       <td class="num">${r.attempts}</td>
       <td class="muted">${fmtDate(r.last_at)}</td>
-    </tr>`).join('') : '<tr><td colspan="6" class="empty">아직 들어온 학생이 없어요.</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="7" class="empty">아직 들어온 학생이 없어요.</td></tr>';
   } catch (_) { body.innerHTML = ''; }
 }
 $('#scoreBody').addEventListener('click', async e => {
@@ -1194,8 +1688,22 @@ async function loadHard(){
 /* ---------- 반 코드 ---------- */
 async function loadCode(){
   $('#codeMsg').textContent = '';
-  try { const [s] = await db(sb.from('vocab_settings').select('class_code')); $('#codeIn').value = s?.class_code || ''; } catch (_) {}
+  $('#goalMsg').textContent = '';
+  try {
+    const [s] = await db(sb.from('vocab_settings').select('class_code, weekly_goal'));
+    $('#codeIn').value = s?.class_code || '';
+    $('#goalIn').value = s?.weekly_goal ?? 300;
+  } catch (_) {}
 }
+$('#goalForm').onsubmit = async e => {
+  e.preventDefault();
+  const n = parseInt($('#goalIn').value, 10);
+  if (!(n >= 10 && n <= 100000)) { $('#goalMsg').textContent = '10 이상 100000 이하로 정해 주세요.'; return; }
+  try {
+    await db(sb.from('vocab_settings').update({ weekly_goal: n, updated_at: new Date().toISOString() }).eq('id', 1));
+    $('#goalMsg').textContent = `주간 목표를 정답 ${n}개로 바꿨어요.`;
+  } catch (_) {}
+};
 $('#codeForm').onsubmit = async e => {
   e.preventDefault();
   const code = $('#codeIn').value.trim(); if (!code) return;
