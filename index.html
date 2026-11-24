@@ -172,6 +172,40 @@
   .bar { height:8px; border-radius:99px; background:var(--track); overflow:hidden; margin-top:4px; min-width:60px; }
   .bar > div { height:100%; background:var(--accent); }
 
+  /* 단어장 첫 화면: 인사·통계·바로가기 */
+  .hero { padding:16px 18px 18px; }
+  .hero-top { display:flex; align-items:flex-end; gap:6px; }
+  .hero-top img { width:84px; height:86px; object-fit:contain; flex-shrink:0; }
+  .bubble.sm { font-size:18px; margin-bottom:26px; line-height:1.35; }
+  .stats { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin:14px 0; }
+  .stat { border-radius:18px; padding:10px 4px; text-align:center; display:flex; flex-direction:column; gap:2px; }
+  .stat b { font-family:var(--round); font-weight:400; font-size:28px; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .stat span { font-size:12px; font-weight:700; color:var(--muted); }
+  .stat.s1 { background:#fdf0f5; } .stat.s1 b { color:#c93a73; }
+  .stat.s2 { background:#fff3e6; } .stat.s2 b { color:#a8540f; }
+  .stat.s3 { background:#f1edff; } .stat.s3 b { color:#5b43c4; }
+  .hero-btns { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+  .hero-btns .btn { font-size:18px; padding:12px 8px; }
+
+  /* 오늘의 단어 */
+  .today { display:flex; flex-direction:column; gap:10px; }
+  .today-head { display:flex; justify-content:space-between; align-items:center; }
+  .today-body { display:flex; align-items:center; gap:14px; }
+  .today .abc { width:58px; height:58px; font-size:22px; flex-shrink:0; }
+  .today .tw { flex:1; min-width:0; }
+  .today .en { font-family:var(--round); font-size:32px; line-height:1.15; word-break:break-word; }
+  .today .ko { font-size:16px; font-weight:700; color:var(--muted); }
+  .today .ex { font-size:14px; color:var(--muted); font-style:italic; background:var(--cell); border-radius:14px; padding:10px 12px; }
+
+  /* 알파벳 묶음 머리글 */
+  ul.words li.letter { border-bottom:0; padding:16px 2px 4px; }
+  ul.words li.letter:first-child { padding-top:4px; }
+  .letter-tile { width:32px; height:32px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;
+    font-family:var(--round); font-size:19px; }
+  .letter-tile.c0 { background:#fde4ee; color:#a52c5d; } .letter-tile.c1 { background:#ffe9d6; color:#94480c; }
+  .letter-tile.c2 { background:#e9e4ff; color:#4f38b5; } .letter-tile.c3 { background:#dcf4ea; color:#14663f; }
+  .letter-count { font-size:12px; color:var(--faint); font-weight:700; margin-left:8px; }
+
   .note { max-width:688px; margin:12px auto 0; width:calc(100% - 32px); background:var(--warn-soft); color:#6b4500; border-radius:18px;
     padding:12px 14px; font-size:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between; }
   #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--bad-text); color:#fff; font-weight:700;
@@ -243,6 +277,24 @@
   </header>
   <main class="wrap">
     <section id="s-list">
+      <section class="card hero">
+        <div class="hero-top">
+          <img src="mascot.png" alt="강아지 캐릭터">
+          <div class="bubble sm" id="heroMsg"></div>
+        </div>
+        <div class="stats">
+          <div class="stat s1"><b id="stTotal">0</b><span>전체 단어</span></div>
+          <div class="stat s2"><b id="stWrong">0</b><span>오답 단어</span></div>
+          <div class="stat s3"><b id="stScore">-</b><span>최근 점수</span></div>
+        </div>
+        <div class="hero-btns">
+          <button class="btn primary big" id="goQuiz"></button>
+          <button class="btn big" id="goReview"></button>
+        </div>
+      </section>
+
+      <section class="card today" id="todayCard"></section>
+
       <div class="card">
         <div class="toolbar">
           <input id="sSearch" placeholder="단어나 뜻으로 찾기" style="max-width:260px">
@@ -569,12 +621,14 @@ async function startStudent(info){
   showScreen('student');
   $('#sWordList').innerHTML = '<div class="empty">불러오는 중…</div>';
   try {
-    const [ws, stats] = await Promise.all([
+    const [ws, stats, recent] = await Promise.all([
       db(sb.from('vocab_words').select('id,en,ko,ex').order('en')),
       db(sb.from('vocab_word_stats').select('word_id,wrong')),
+      db(sb.from('vocab_attempts').select('score').order('created_at', { ascending: false }).limit(1)),
     ]);
     const wrongBy = Object.fromEntries(stats.map(s => [s.word_id, s.wrong]));
     words = ws.map(w => ({ ...w, wrong: wrongBy[w.id] || 0 }));
+    lastScore = recent[0]?.score ?? null;
   } catch (_) { words = []; }
   showStudentTab('list');
 }
@@ -600,12 +654,60 @@ function wordItem(w, opts = {}){
 }
 
 $('#sSearch').oninput = renderStudentList;
+let lastScore = null;   // 내 최근 퀴즈 점수
+$('#goQuiz').innerHTML = `${svg('<path d="M9 4h6l1 4H8z"></path><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M9 14h6"></path>', 20)} 퀴즈 풀기`;
+$('#goReview').innerHTML = `${ICON.cards(20)} 오답 복습`;
+$('#goQuiz').onclick = () => showStudentTab('quiz');
+$('#goReview').onclick = () => { $('#flashSet').value = 'wrong'; showStudentTab('flash'); };
+
+function renderHero(){
+  const wrongN = words.filter(w => w.wrong > 0).length;
+  $('#stTotal').textContent = words.length;
+  $('#stWrong').textContent = wrongN;
+  $('#stScore').textContent = lastScore ?? '-';
+  $('#heroMsg').textContent = wrongN ? `오답 단어가 ${wrongN}개 있어요. 같이 복습해요!`
+    : lastScore == null ? `${me?.name || ''}, 첫 퀴즈에 도전해 볼까요?`
+    : lastScore === 100 ? '지난 퀴즈 100점! 정말 멋져요'
+    : `${me?.name || ''}, 오늘도 같이 외워요!`;
+}
+
+// 오늘의 단어: 날짜마다 바뀌고, 같은 날에는 모두 같은 단어
+function renderToday(){
+  const card = $('#todayCard');
+  if (!words.length) { card.classList.add('hidden'); return; }
+  card.classList.remove('hidden');
+  const d = new Date(), key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  let h = 0; for (const ch of key) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const w = words[h % words.length];
+  card.innerHTML = `
+    <div class="today-head"><span class="chip">오늘의 단어</span><span class="muted" style="font-size:13px">${d.getMonth() + 1}월 ${d.getDate()}일</span></div>
+    <div class="today-body">
+      <div class="abc" aria-hidden="true">abc</div>
+      <div class="tw"><div class="en">${esc(w.en)}</div><div class="ko">${esc(w.ko)}</div></div>
+      <button class="icon" aria-label="${esc(w.en)} 발음 듣기" data-speak="${esc(w.en)}">${ICON.speaker(22)}</button>
+    </div>
+    ${w.ex ? `<div class="ex">${esc(w.ex)}</div>` : ''}`;
+}
+
 function renderStudentList(){
+  renderHero(); renderToday();
   const q = $('#sSearch').value.trim().toLowerCase();
   const list = words.filter(w => !q || w.en.toLowerCase().includes(q) || w.ko.includes(q));
-  $('#sCount').textContent = `${words.length}개`;
-  $('#sWordList').innerHTML = list.length ? list.map(w => wordItem(w)).join('')
-    : `<div class="empty">${q ? '찾는 단어가 없어요.' : '아직 단어가 없어요.'}</div>`;
+  $('#sCount').textContent = q ? `${list.length} / ${words.length}개` : `${words.length}개`;
+  if (!list.length) { $('#sWordList').innerHTML = `<div class="empty">${q ? '찾는 단어가 없어요.' : '아직 단어가 없어요.'}</div>`; return; }
+  // 첫 글자별로 묶어서 머리글을 붙임
+  const groups = new Map();
+  for (const w of list) {
+    const k = /[a-z]/i.test(w.en[0]) ? w.en[0].toUpperCase() : '#';
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(w);
+  }
+  let i = 0, html = '';
+  for (const [k, ws] of groups) {
+    html += `<li class="letter"><span class="letter-tile c${i++ % 4}">${k}</span><span class="letter-count">${ws.length}개</span></li>`;
+    html += ws.map(w => wordItem(w)).join('');
+  }
+  $('#sWordList').innerHTML = html;
 }
 
 // 오답 기록 (기획서 5장) — 화면은 기다리지 않음
@@ -824,7 +926,7 @@ async function quizDone(){
   const { error } = await sb.rpc('vocab_save_attempt', { p_answers: answers.map(({ _w, _type, ...a }) => a) });
   const sm = $('#saveMsg');
   if (error) { sm.classList.add('err'); sm.textContent = '결과를 저장하지 못했어요'; toast(error); }
-  else sm.innerHTML = `${ICON.check(16)} 결과가 저장됐어요`;
+  else { sm.innerHTML = `${ICON.check(16)} 결과가 저장됐어요`; lastScore = pct; }
 }
 
 /* ---------- 오답노트 ---------- */
