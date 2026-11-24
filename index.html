@@ -251,8 +251,47 @@
       <label class="field">비밀번호<input id="tPw" type="password" required autocomplete="current-password"></label>
       <div class="error" id="tErr"></div>
       <button class="btn primary big block" id="tBtn">로그인</button>
+      <p style="text-align:center;margin:12px 0 0"><button type="button" class="link" id="toForgot">비밀번호를 잊었어요</button></p>
     </form>
     <p style="text-align:center"><button class="link" id="toStudent">← 학생으로 들어가기</button></p>
+  </div>
+</section>
+
+<!-- ===== 비밀번호 찾기 (재설정 메일 보내기) ===== -->
+<section id="scr-forgot" class="hidden">
+  <div class="wrap login-box">
+    <div class="login-hero">
+      <img src="mascot.png" alt="강아지 캐릭터" style="width:110px;height:112px">
+      <h1>비밀번호 찾기</h1>
+      <p class="muted" style="margin:0">선생님 이메일로 비밀번호를 다시 정하는 링크를 보내 드려요.</p>
+    </div>
+    <form class="card" id="forgotForm" style="padding:22px">
+      <label class="field">선생님 이메일<input id="fEmail" type="email" required autocomplete="username"></label>
+      <div class="error" id="fErr"></div>
+      <div class="fb-card ok hidden" id="fDone" style="margin-bottom:14px;box-shadow:none;background:var(--ok-soft)">
+        <div><div class="fb-title" style="font-size:18px">메일을 보냈어요</div>
+        <div class="fb-sub" style="font-size:14px">메일의 링크를 누르면 새 비밀번호를 정할 수 있어요. 몇 분 걸릴 수 있고, 안 보이면 스팸함도 확인해 주세요.</div></div>
+      </div>
+      <button class="btn primary big block" id="fBtn">재설정 메일 보내기</button>
+    </form>
+    <p style="text-align:center"><button class="link" id="forgotBack">← 선생님 로그인으로</button></p>
+  </div>
+</section>
+
+<!-- ===== 새 비밀번호 정하기 (메일 링크로 들어온 경우) ===== -->
+<section id="scr-reset" class="hidden">
+  <div class="wrap login-box">
+    <div class="login-hero">
+      <img src="mascot.png" alt="강아지 캐릭터" style="width:110px;height:112px">
+      <h1>새 비밀번호</h1>
+      <p class="muted" style="margin:0">앞으로 선생님 로그인에 쓸 비밀번호를 정해 주세요.</p>
+    </div>
+    <form class="card" id="resetForm" style="padding:22px">
+      <label class="field">새 비밀번호 (8자 이상)<input id="rPw" type="password" required minlength="8" autocomplete="new-password"></label>
+      <label class="field">한 번 더 입력<input id="rPw2" type="password" required minlength="8" autocomplete="new-password"></label>
+      <div class="error" id="rErr"></div>
+      <button class="btn primary big block" id="rBtn">비밀번호 바꾸기</button>
+    </form>
   </div>
 </section>
 
@@ -475,6 +514,9 @@ const ERR_KO = {
   bad_name: '이름을 입력하세요.',
   anonymous_provider_disabled: '학생 입장이 아직 준비되지 않았어요. 선생님께 알려주세요. (익명 로그인 꺼짐)',
   'Invalid login credentials': '이메일 또는 비밀번호가 맞지 않아요.',
+  over_email_send_rate_limit: '메일을 너무 자주 보냈어요. 잠시 후 다시 시도해 주세요.',
+  same_password: '이전과 다른 비밀번호를 정해 주세요.',
+  weak_password: '비밀번호가 너무 쉬워요. 더 길게 정해 주세요.',
 };
 function errText(err){
   const m = err?.message || String(err);
@@ -542,7 +584,7 @@ if (IN_APP || !synth) {
   }
 }
 function showScreen(name){
-  ['loading','join','tlogin','student','teacher'].forEach(s => $('#scr-'+s).classList.toggle('hidden', s !== name));
+  ['loading','join','tlogin','forgot','reset','student','teacher'].forEach(s => $('#scr-'+s).classList.toggle('hidden', s !== name));
   window.scrollTo(0, 0);
 }
 function setupTabs(navSel, prefix, tabs, onShow){
@@ -560,9 +602,24 @@ document.addEventListener('click', e => {
 });
 
 /* ================= 시작 ================= */
+// 비밀번호 재설정 메일의 링크로 들어오면 주소 뒤에 #...type=recovery 가 붙음
+const HASH = new URLSearchParams(location.hash.slice(1));
+const IS_RECOVERY = HASH.get('type') === 'recovery';
+const AUTH_ERR = HASH.get('error_description') || HASH.get('error');
+
 async function boot(){
   showScreen('loading');
+  if (AUTH_ERR) {
+    history.replaceState(null, '', location.pathname);
+    showScreen('tlogin');
+    $('#tErr').textContent = /expired|invalid/i.test(AUTH_ERR) ? '비밀번호 재설정 링크가 만료됐어요. "비밀번호를 잊었어요"로 다시 요청해 주세요.' : AUTH_ERR;
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
+  if (IS_RECOVERY) {
+    history.replaceState(null, '', location.pathname);
+    if (session) return showScreen('reset');
+  }
   if (!session) return showScreen('join');
   if (session.user.is_anonymous) {
     const { data: me } = await sb.rpc('vocab_me');
@@ -952,6 +1009,42 @@ $('#tLoginForm').onsubmit = async e => {
   finally { $('#tBtn').disabled = false; }
 };
 $('#tLogout').onclick = async () => { await sb.auth.signOut(); showScreen('join'); };
+
+/* ---------- 비밀번호 찾기 ---------- */
+$('#toForgot').onclick = () => {
+  $('#fEmail').value = $('#tEmail').value; $('#fErr').textContent = ''; $('#fDone').classList.add('hidden');
+  showScreen('forgot');
+};
+$('#forgotBack').onclick = () => { $('#tErr').textContent = ''; showScreen('tlogin'); };
+$('#forgotForm').onsubmit = async e => {
+  e.preventDefault();
+  $('#fErr').textContent = ''; $('#fDone').classList.add('hidden'); $('#fBtn').disabled = true;
+  try {
+    // 메일 링크는 지금 이 주소로 돌아오게 함 (Supabase 대시보드의 Redirect URLs에 등록돼 있어야 함)
+    const { error } = await sb.auth.resetPasswordForEmail($('#fEmail').value.trim(), { redirectTo: location.origin + location.pathname });
+    if (error) throw error;
+    $('#fDone').classList.remove('hidden');   // 가입 여부는 알려주지 않음 (보안)
+  } catch (err) { $('#fErr').textContent = errText(err); }
+  finally { $('#fBtn').disabled = false; }
+};
+
+$('#resetForm').onsubmit = async e => {
+  e.preventDefault();
+  const pw = $('#rPw').value, pw2 = $('#rPw2').value;
+  $('#rErr').textContent = '';
+  if (pw.length < 8) { $('#rErr').textContent = '비밀번호는 8자 이상으로 정해 주세요.'; return; }
+  if (pw !== pw2) { $('#rErr').textContent = '두 비밀번호가 서로 달라요.'; return; }
+  $('#rBtn').disabled = true;
+  try {
+    const { data, error } = await sb.auth.updateUser({ password: pw });
+    if (error) throw error;
+    $('#resetForm').reset();
+    const { data: isT } = await sb.rpc('vocab_is_teacher');
+    if (!isT) { await sb.auth.signOut(); showScreen('tlogin'); $('#tErr').textContent = '비밀번호는 바뀌었지만, 선생님으로 등록된 계정이 아니에요.'; return; }
+    startTeacher(data.user);
+  } catch (err) { $('#rErr').textContent = errText(err); }
+  finally { $('#rBtn').disabled = false; }
+};
 
 let tWords = [];
 const showTeacherTab = setupTabs('#tNav', 't-', ['words','scores','hard','code'], t => {
