@@ -169,12 +169,19 @@
   .bar { height:8px; border-radius:99px; background:var(--track); overflow:hidden; margin-top:4px; min-width:60px; }
   .bar > div { height:100%; background:var(--accent); }
 
+  .note { max-width:688px; margin:12px auto 0; width:calc(100% - 32px); background:var(--warn-soft); color:#6b4500; border-radius:18px;
+    padding:12px 14px; font-size:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between; }
   #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--bad-text); color:#fff; font-weight:700;
     padding:12px 18px; border-radius:18px; z-index:10; max-width:90vw; box-shadow:0 6px 18px rgba(0,0,0,.15); }
   @media (max-width:420px){ .qtext{font-size:32px;} .flash .big{font-size:34px;} .choice .t{font-size:18px;} }
 </style>
 </head>
 <body>
+
+<div id="inappNote" class="note hidden" role="status">
+  <span>카카오톡·네이버 같은 앱 안에서 열면 <b>발음이 안 나올 수 있어요.</b> 크롬이나 사파리로 열어 주세요.</span>
+  <button class="btn sm hidden" id="openExternal">외부 브라우저로 열기</button>
+</div>
 
 <!-- ===== 학생 입장 ===== -->
 <section id="scr-join" class="hidden">
@@ -429,11 +436,55 @@ async function db(query){
   if (error) { toast(error); throw error; }
   return data;
 }
+/* ---------- 발음 (모바일 대응) ----------
+   - 아이폰 등은 화면을 처음 누를 때 음성을 '깨워' 둬야 이후 자동 재생이 됨
+   - 휴대폰은 영어 목소리를 직접 골라 줘야 하는 경우가 있음 (기본이 한국어 목소리)
+   - 멈춘 직후 바로 말하게 하면 소리가 씹히는 브라우저가 있어 잠깐 쉬고 말함 */
+const synth = window.speechSynthesis || null;
+let enVoice = null, speechUnlocked = false, speechWarned = false;
+function pickVoice(){
+  if (!synth) return;
+  const score = v => (/en[-_]US/i.test(v.lang) ? 4 : 0) + (/google|natural|enhanced|premium|samantha/i.test(v.name) ? 2 : 0) + (v.localService ? 1 : 0);
+  enVoice = synth.getVoices().filter(v => /^en[-_]/i.test(v.lang)).sort((a, b) => score(b) - score(a))[0] || null;
+}
+if (synth) { pickVoice(); synth.addEventListener?.('voiceschanged', pickVoice); }
+function unlockSpeech(){
+  if (speechUnlocked || !synth) return;
+  speechUnlocked = true;
+  const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u);
+}
+document.addEventListener('pointerdown', unlockSpeech, true);
+document.addEventListener('touchend', unlockSpeech, true);
+function warnNoSpeech(){
+  if (speechWarned) return; speechWarned = true;
+  toast(IN_APP ? '이 앱 안에서는 발음이 나오지 않아요. 크롬이나 사파리로 열어 주세요.'
+               : '발음이 나오지 않아요. 소리 크기와 무음 모드를 확인하고, 크롬이나 사파리로 열어 주세요.');
+}
 function speak(text){
-  if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.9;
-  speechSynthesis.speak(u);
+  if (!synth) { warnNoSpeech(); return; }
+  unlockSpeech();
+  if (!enVoice) pickVoice();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = enVoice?.lang || 'en-US'; if (enVoice) u.voice = enVoice; u.rate = 0.9;
+  u.onerror = e => { if (!['interrupted', 'canceled', 'not-allowed'].includes(e.error)) warnNoSpeech(); };
+  speak.last = u;   // 크롬에서 말하는 도중 사라지지 않게 붙잡아 둠
+  const id = speak.seq = (speak.seq || 0) + 1;   // 연달아 누르면 마지막 단어만 읽음
+  const busy = synth.speaking || synth.pending;
+  if (busy) synth.cancel();
+  synth.resume();
+  if (busy) setTimeout(() => { if (id === speak.seq) synth.speak(u); }, 80); else synth.speak(u);
+}
+
+/* ---------- 앱 안 브라우저(카카오톡·네이버 등) 안내 ---------- */
+const UA = navigator.userAgent;
+const IN_KAKAO = /KAKAOTALK/i.test(UA);
+const IN_APP = IN_KAKAO || /NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|BAND\//i.test(UA);
+if (IN_APP || !synth) {
+  $('#inappNote').classList.remove('hidden');
+  if (IN_KAKAO) {
+    const b = $('#openExternal'); b.classList.remove('hidden');
+    b.onclick = () => { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href); };
+  }
 }
 function showScreen(name){
   ['loading','join','tlogin','student','teacher'].forEach(s => $('#scr-'+s).classList.toggle('hidden', s !== name));
